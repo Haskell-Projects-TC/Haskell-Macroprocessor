@@ -14,10 +14,17 @@ separators
 
 
 lookUp :: String -> [(String, a)] -> [a]
-lookUp = error "TODO: implement lookUp"
+lookUp  str list
+  = [x | (str', x) <- list, str == str']  
 
 split :: [Char] -> String -> (String, [String])
-split = error "TODO: implement split"
+split  _ ""
+  = ("", [""])
+split seps (y : ys)
+  | elem y seps = (y : seps', "" : (x : xs)) 
+  | otherwise   = (seps', (y : x) : xs)
+    where
+      (seps',(x : xs)) = split seps ys
 
 combine :: String -> [String] -> [String]
 combine = error "TODO: implement combine"
