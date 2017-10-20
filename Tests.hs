@@ -9,7 +9,10 @@ lookUpTestCases
     , ("a", []) ==> []
     , ("a", [("a", 9)]) ==> [9]
     , ("a", [("b", 9)]) ==> []
-    ]
+    , ("!", [("H", 8), ("I",9), ("!",5), ("!",7)]) ==> [5,7]
+    , ("5", [("2", 4), ("5",12), ("9",33), ("g",6)]) ==> [12]
+    , ("hot", [("hot", 0), ("chocolate",71), ("9",86), ("%%",16)]) ==> [0]
+    ] 
 
 splitTestCases
   = [ (" .,", "A comma, then some words.")
@@ -20,6 +23,10 @@ splitTestCases
         ==> (".", ["A","B"])
     , (" ", " A")
         ==> (" ", ["", "A"])
+    , ("\n\t.,:;!\"\'()<>/\\", "\n\t.,:;!\"\'()<>/\\")           
+        ==> ("\n\t.,:;!\"\'()<>/\\",["","","","","","","","","","","","","","","",""])
+    , ("", "helloworld")
+        ==> ("", ["helloworld"])
     ]
 
 combineTestCases
@@ -32,6 +39,10 @@ combineTestCases
         ==> ["A",".","B"]
     , (" ", ["", "A"])
         ==> [""," ","A"]
+    , (" ;", ["hot","chocolate"])
+        ==> ["hot"," ","chocolate",";"]
+    ,  ("!", [""])    
+         ==> ["","!"]
     ]
 
 getKeywordDefsTestCases
@@ -51,6 +62,10 @@ getKeywordDefsTestCases
         ==> [("$","meanie!")]
     , ["$var  Tristan Allwood"]
         ==> [("$var", " Tristan Allwood")]
+    , ["$. Hello World."]
+        ==> [("$.", "Hello World.")]
+    , ["$hot choc  ;"]
+        ==> [("$hot", "choc  ;")]
     ]
 
 expandTestCases
@@ -61,6 +76,8 @@ expandTestCases
     , ("Keywords (e.g. $x, $y, $z...) may appear anwhere, e.g. <$here>.",
        "$x $a\n$y $b\n$z $c\n$here $this-is-one")
         ==> "Keywords (e.g. $a, $b, $c...) may appear anwhere, e.g. <$this-is-one>."
+    , ("", "")
+        ==> ""
     ]
 
 allTestCases

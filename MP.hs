@@ -37,26 +37,47 @@ split seps (y : ys)
 -- strings
 combine :: String -> [String] -> [String]
 combine "" string 
-  = string
+  = string 
 combine (sep : seps) (x : xs)
   = x : [sep] : combine seps xs
 
+-- the function getKeywordDefs splits on the spaces in the strings in the
+-- information file and returns a list of keyword/definition pairs by
+-- concatenating and combining the variables from pattern matching the split
 getKeywordDefs :: [String] -> KeywordDefs
 getKeywordDefs []
   = []
 getKeywordDefs (x : xs)
   = (keyw, concat (combine spaces def)) : getKeywordDefs xs
     where 
-      (_ : spaces, keyw : def )= split " " x 
-
+      (_ : spaces, keyw : def ) = split " " x 
+-- expand brings all of the functions together in the macroprocessor and takes
+-- the template file and the info file and replaces the required words.
+-- the main function allows this function to read and write the necessary files.
+-- this function has also been tested in the command line as mentioned in the
+-- specification.
 expand :: FileContents -> FileContents -> FileContents
-expand = error "TODO: implement expand"
+expand temp inf
+  = concat (combine seps [replaceWord x keywds | x <- words])
+    where
+     (_,  defs)    = split "\n" inf
+     keywds        = getKeywordDefs defs
+     (seps, words) = split separators temp
 
--- You may wish to uncomment and implement this helper function
--- when implementing expand
--- replaceWord :: String -> KeywordDefs -> String
-
-
+-- Below is a helper function implemented in order to aid the definition of the
+-- expand function
+-- Here I have decided to return the original word if the keyword replacement
+-- can not be found. This is done using replaceword'
+replaceWord :: String -> KeywordDefs -> String
+replaceWord "" _ 
+  = ""
+replaceWord word@(x : xs) keywd
+  | x == '$'  = replaceword' (lookUp word keywd)
+  | otherwise = word 
+    where
+      replaceword' :: [String] -> String
+      replaceword' []       = word
+      replaceword' (y : ys) = y
 
 main :: IO ()
 -- The provided main program which uses your functions to merge a
